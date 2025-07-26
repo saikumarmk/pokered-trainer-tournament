@@ -12,10 +12,23 @@ class Pokemon:
 
 @dataclass
 class Trainer:
+    """
+    Data structure for a Pokémon Trainer and their LR Elo.
+
+    name: Trainer's name
+    location: In-game location of the trainer
+    pokemon: List of their Pokémon (could be used for features)
+    lr_elo: Logistic Regression Elo rating (starts at 1500)
+    """
+
     name: str
     location: str
-    pokemon: List[Pokemon] = field(default_factory=list)
-    modifiers: tuple[int] = ()
+    pokemon: list[Pokemon] = field(default_factory=list)
+    lr_elo: float = 1500.0
+    win: int = 0
+    loss: int = 0
+    draw: int = 0
+    
 
 
 @dataclass

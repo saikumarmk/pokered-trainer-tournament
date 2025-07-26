@@ -3,10 +3,10 @@ import os
 import re
 from pykmn.data.gen1 import MOVES, SPECIES
 import json
-import sys
+import click 
 
-sys.path.append("..")
-from models.pokemon import Pokemon, Trainer, TrainerClass, serialize_trainerclasses
+
+from src.models.pokemon import Pokemon, Trainer, TrainerClass, serialize_trainerclasses
 
 
 def parse_dex_data(data: str):
@@ -68,7 +68,7 @@ def parse_move_choices(data: str):
     return move_choices_dict
 
 
-def parse_trainer_data(data: str, set_level: None | int) -> List[TrainerClass]:
+def parse_trainer_data(data: str, set_level: None | int = None) -> List[TrainerClass]:
     trainer_classes = []
     current_trainer_class = None
     current_location = None
@@ -377,8 +377,9 @@ def populate_trainer_moves(
                 pokemon.species = name_map[pokemon.species.upper()]
 
 
-if __name__ == "__main__":
+def gen_trainer_data(output_path: str, set_level: int | None = None):
     """
+    Generates trainer data, optionally fixing the level of all pokemon.
     Load party data (without levels)
     Load learnset moves
     Then patch last four learned moves in and save
@@ -403,7 +404,7 @@ if __name__ == "__main__":
     move_choices = list(parse_move_choices(move_choices_asm).values())
 
     # Grab trainer data
-    trainer_classes = parse_trainer_data(trainer_class_data)[1:]
+    trainer_classes = parse_trainer_data(trainer_class_data, set_level)[1:] # Specify level here
     for idx, trainer_class in enumerate(trainer_classes):
         trainer_class.modifiers = move_choices[idx]
         for trainer in trainer_class.trainers:
@@ -434,11 +435,20 @@ if __name__ == "__main__":
     # Add in moves
     populate_trainer_moves(trainer_classes, levelup_moves, name_map)
 
-    # Correct pokemon names here
-    # print(trainer_classes)
-
     # Dump data, don't include 0th trainer which is empty
-    serialize_trainerclasses(trainer_classes, "data/trainerclasses.pkl")
-
+    serialize_trainerclasses(trainer_classes, output_path)
+    
+    # Need moves for ai modifier
     with open("data/moves.json", "w") as f:
         json.dump(moves_data, f)
+
+@click.command()
+@click.argument("output_path")
+@click.option("--set-level", default=None)
+def gen_trainer_data_cmd(output_path: str, set_level: int | None = None):
+    return gen_trainer_data(output_path, set_level)
+
+
+
+if __name__ == "__main__":
+    gen_trainer_data_cmd()

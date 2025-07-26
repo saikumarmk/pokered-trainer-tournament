@@ -2,10 +2,10 @@ from typing import Callable
 import random
 from pykmn.engine.gen1 import Battle, Player, Choice, ChoiceType
 from pykmn.engine.common import ResultType, Result
-from ai.modifiers import mod1, mod2, mod3
+from src.ai.modifiers import mod1, mod2, mod3
 from functools import partial
 from json import load
-from models.pokemon import Trainer
+from src.models.pokemon import Trainer
 
 with open("data/moves.json") as f:
     moves_data = load(f)

@@ -17,12 +17,35 @@ python3 -m pip install --find-links=dist pykmn
 
 Which will generate the wheels for `pykmn` then install them. You should build this inside the virtual environment, although you could run the first command and then manually install the wheel. Up to you.
 
-After all your dependencies have been installed, you can regenerate the `trainerclasses.pkl` file by running:
+## Instructions
 
-```bash
-python -m utils.parse_asm
+Generate trainer data, run the tournament and then do analysis.
+
+## Generating Trainer Files
+
+If you don't specify the level, it defaults to their usual levels.
+
+```
+python -m src.main gen trainer_path --set-level 100
 ```
 
-## Generating results
+## Simulate Tournament
 
-You can simply run `python run_battle.py` to simulate all `391*390/2` battles, which will then be pickled. TBD on how to analyse these results, though you can just use `utils/elo_calculator.py` inside a notebook to get the rankings.
+
+```
+python -m src.main tourney trainer_path battle_path
+```
+
+## Elo calculation
+
+```
+python -m src.main elo trainer_path battle_path
+```
+
+## E2E Example
+
+If you want to do everything at once, use `e2e`:
+
+```
+python -m src.main e2e "data/new.pkl" "data/battle.pkl" 
+```
